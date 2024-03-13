@@ -3,7 +3,6 @@ import time
 import subprocess
 import smtplib
 import os
-import traceback
 from email import message_from_bytes
 from dotenv import load_dotenv
 
@@ -25,14 +24,14 @@ def send_mail(subject, body):
             server.login(USERNAME, PASSWORD)
             server.sendmail(USERNAME, SENDTO, msg)
     except Exception as e:
-        print(f"Error sending email: {e}")
+        pass  # Ne rien faire en cas d'erreur
 
 def execute_command(command):
     """Exécuter une commande shell de manière sécurisée"""
     try:
-        with subprocess.Popen(command, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+        with subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
             stdout, stderr = process.communicate()
-            output = stdout.decode() + stderr.decode()
+            output = (stdout + stderr).decode()
             if process.returncode == 0:
                 return "Command executed successfully. Output: " + output
             else:
@@ -80,10 +79,7 @@ def main():
             # Attendre pendant une courte période avant de vérifier les nouveaux e-mails
             time.sleep(10)
         except Exception as e:
-            # Journalisation de l'erreur
-            traceback.print_exc()
-            # Envoyer l'erreur par e-mail pour notification
-            send_mail("Error Notification", f"An error occurred: {e}")
+            pass  # Ne rien faire en cas d'erreur
 
 if __name__ == "__main__":
     main()
