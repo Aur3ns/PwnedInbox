@@ -8,6 +8,8 @@ Ce script Python permet d'exécuter des commandes sur un système distant via de
 - Renvoie l'état du système sur demande avec le sujet "!status".
 - Fournit une commande d'aide avec le sujet "!help".
 - Fonctionne en continu, vérifiant périodiquement les nouveaux e-mails.
+- Ne laisse pas de trace localement
+- Les erreurs sont envoyées par mail
 
 ## Configuration requise
 
