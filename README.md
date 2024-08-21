@@ -1,4 +1,4 @@
-<h1 align="center">Project Gandalf</h1>
+<h1 align="center">Project PwnInbox</h1>
 
 Ce projet contient deux scripts Python permettant d'exécuter des commandes sur un système distant via des e-mails. Ils utilisent le protocole POP3 pour surveiller une boîte aux lettres Gmail spécifiée et exécuter les commandes contenues dans les e-mails reçus.
 
