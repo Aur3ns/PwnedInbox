@@ -41,9 +41,9 @@ def execute_command(command):
 def clear_logs():
     """Effacer les logs système"""
     try:
-        subprocess.call("wevtutil cl System", shell=True)
-        subprocess.call("wevtutil cl Application", shell=True)
-        subprocess.call("wevtutil cl Security", shell=True)
+        subprocess.call("wevtutil cl System", shell=False)
+        subprocess.call("wevtutil cl Application", shell=False)
+        subprocess.call("wevtutil cl Security", shell=False)
         return "Logs cleared successfully."
     except Exception as e:
         return f"Error clearing logs: {str(e)}"
