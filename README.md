@@ -60,6 +60,6 @@ Avant d'utiliser ces scripts, assurez-vous d'avoir configuré les variables d'en
 - **Ne partagez pas le fichier `.env` :** Ne partagez pas le contenu de votre fichier `.env` avec d'autres personnes.
 - **Attention aux sources d'e-mails non fiables :** Ce script exécute des commandes en fonction des e-mails reçus. Assurez-vous de ne pas exposer votre système à des risques de sécurité.
 
-## 👤 Author
+## 👤 Auteur
 
 - **[BlackBird63030]**
