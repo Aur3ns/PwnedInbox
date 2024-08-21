@@ -1,4 +1,4 @@
-# Email Commander
+<h1 align="center">PwnedInbox</h1>
 
 Ce script Python permet d'exécuter des commandes sur un système distant via des e-mails. Il utilise le protocole POP3 pour surveiller une boîte aux lettres Gmail spécifiée et exécute les commandes contenues dans les e-mails reçus.
 
