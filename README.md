@@ -2,7 +2,7 @@
 
 Ce script Python permet d'exécuter des commandes sur un système distant via des e-mails. Il utilise le protocole POP3 pour surveiller une boîte aux lettres Gmail spécifiée et exécute les commandes contenues dans les e-mails reçus.
 
-## Fonctionnalités
+## 🚀 Fonctionnalités
 
 - Exécute des commandes sur le système distant à partir d'e-mails avec le sujet "!command".
 - Renvoie l'état du système sur demande avec le sujet "!status".
@@ -11,7 +11,7 @@ Ce script Python permet d'exécuter des commandes sur un système distant via de
 - Ne laisse pas de trace localement
 - Les erreurs sont envoyées par mail
 
-## Configuration requise
+## ⚙️ Configuration requise
 
 Avant d'utiliser ce script, assurez-vous d'avoir configuré les variables d'environnement suivantes dans un fichier `.env` :
 
@@ -19,13 +19,13 @@ Avant d'utiliser ce script, assurez-vous d'avoir configuré les variables d'envi
 - `GMAIL_PASSWORD`: Mot de passe de votre compte Gmail.
 - `SENDTO_EMAIL`: Adresse e-mail à laquelle envoyer les réponses aux commandes.
 
-## Utilisation
+## 🚀 Utilisation
 
 1. Configurez les variables d'environnement requises dans le fichier `.env`.
 2. Exécutez le script en utilisant Python 3.
 3. Envoyez des e-mails avec les sujets appropriés pour exécuter des commandes ou obtenir l'état du système.
 
-## Sécurité
+## ⚠️ Sécurité
 
 - Assurez-vous que le compte Gmail utilisé dispose d'une authentification à deux facteurs et que vous utilisez un mot de passe d'application pour des raisons de sécurité.
 - Ne partagez pas le contenu de votre fichier `.env` avec d'autres personnes.
